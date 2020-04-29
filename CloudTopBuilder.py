@@ -59,13 +59,16 @@ ENTRYPOINT [ "/init" ]'
 def main():
 
    global DESKTOP_FILE, DESKTOP_INIT_FILE_HEADER, DESKTOP_INIT_FILE_STANZA, CLOUDTOP_HEADER_LINE, CLOUDTOP_ENTRYPOINT_LINE
-   if len(sys.argv) < 3:
-      print ("usage: dockerBuilder.py yamlFile outputDirectory")
+   if len(sys.argv) < 2:
+      print ("usage: dockerBuilder.py yamlFile")
       return
 
    thisExecutable = sys.argv[0]
    yamlFile = sys.argv[1]
-   outputDir = sys.argv[2]
+   outputDir = "./generated"
+
+   print ("creating directory (if needed): " + outputDir)
+   os.makedirs(outputDir, exist_ok=True)
 
    now = datetime.datetime.now().ctime()
 
@@ -74,21 +77,15 @@ def main():
 
    # Read the yaml file and grab the scripts and shortcuts
    parsedYaml = yaml.load(inFile, Loader=yaml.FullLoader)
-   print ("parsedYaml: " , parsedYaml)
 
    outputs = parsedYaml["output"]
-   print ("outputs: " , outputs)
    outputFileName = outputs["dockerFile"]
 
-   outFile = open(outputDir + "/" + outputFileName, "w")
+   outFile = open(outputFileName, "w")
    run = parsedYaml["run"]
-   print ("run: " , run)
    commands = run["commands"]
-   print ("commands: " , commands)
    scripts = run["scripts"]
-   print ("scripts: " , scripts)
    shortcuts = parsedYaml["shortcuts"]
-   print ("shortcuts: " , shortcuts)
 
    # Insert the correct GENERATOR name and TIME and Add the header line
    CLOUDTOP_HEADER_LINE = CLOUDTOP_HEADER_LINE.replace("GENERATOR", thisExecutable).replace("TIME", now)
@@ -106,8 +103,7 @@ def main():
    # execute it,
    for i in range(len(scripts)):
       thisScript = scripts[i]
-      print ("found script", thisScript)
-      outFile.write("COPY " + thisScript + " /")      
+      outFile.write("COPY " +  thisScript + " /")      
       outFile.write("\n")
       outFile.write("RUN chmod +x /" + thisScript + " && " + "/" + thisScript)      
       outFile.write("\n")
@@ -120,24 +116,20 @@ def main():
 
    # set the default icon: it's invariant
    defaultIcon = "applications-other"
-   print ("type of shortcuts: " , type(shortcuts))
 
    # As noted above, we also need to create an init file but only if there is at least 1 shortcut 
    if len(shortcuts) > 0:
       # create the init file
-      initFile= open(DESKTOP_INIT_FILE_NAME, "w")
+      initFile= open(outputDir + "/" + DESKTOP_INIT_FILE_NAME, "w")
       
       # add the required header
       initFile.write(DESKTOP_INIT_FILE_HEADER.replace("GENERATOR", thisExecutable).replace("TIME", now))
       
    for i in range(len(shortcuts)):
       thisShortcut = shortcuts[i]
-      print("thisShortcut: " , thisShortcut)
-      print("type of thisShortcut: " , type(thisShortcut))
       for key in thisShortcut:
-         print("key is: ", key)
          attrs = thisShortcut[key]
-         print("attrs : ", attrs)
+
          # get the required exec key
          exec = attrs["exec"]
 
@@ -154,12 +146,15 @@ def main():
          
          # Create the desktopfile name
          desktopFileName = key + ".desktop"   
+
+         # Create the local name for desktopfile name
+         generateDesktopFileName = outputDir + "/" + key + ".desktop"   
             
          # opem the desktopfile    
-         desktopFile= open(desktopFileName, "w")
+         desktopFile= open(generateDesktopFileName, "w")
 
          # If the desktop file isn't executable, the launcher gives a warning.  No one wants that :)
-         os.chmod(desktopFileName, 0o775)
+         os.chmod(generateDesktopFileName, 0o775)
          desktopFile.write(DESKTOP_FILE.replace("EXEC", exec).replace("NAME", name).replace("ICON", icon))
 
          # now added the needed stanza to the init file
@@ -170,14 +165,10 @@ def main():
    initFile.close()
 
    # Now we need to copy the desktop files and the container init files to the proper location
-   outFile.write("COPY *.desktop /headless/Desktop/")
+   outFile.write("COPY " + outputDir + "/*.desktop /headless/Desktop/")
    outFile.write("\n")
-   outFile.write("COPY " + DESKTOP_INIT_FILE_NAME + " /etc/cont-init.d/" + DESKTOP_INIT_FILE_NAME)
+   outFile.write("COPY " + outputDir + "/" + DESKTOP_INIT_FILE_NAME + " /etc/cont-init.d/" + DESKTOP_INIT_FILE_NAME)
    outFile.write(CLOUDTOP_ENTRYPOINT_LINE)
-#  print ("CLOUDTOP_HEADER_LINE: " , CLOUDTOP_HEADER_LINE)
-#  print ("CLOUDTOP_ENTRYPOINT_LINE: " , CLOUDTOP_ENTRYPOINT_LINE)
-#  print ("parsedYaml: " , parsedYaml)
-#  print ("scripts: " , scripts)
 
    outFile.close()
 if __name__ == "__main__":

@@ -1,0 +1,14 @@
+---
+output: 
+    dockerFile: Docker.imagej
+run:
+    commands:
+       - "mkdir -p /usr/local/renci/bin"
+    scripts:
+       - imagej.sh
+
+shortcuts:
+    - imagej:
+         icon: /usr/local/renci/bin/ImageJ/images/icon.png
+         exec: /usr/bin/java -Xmx512m -cp /usr/local/renci/bin/ImageJ/ij.jar ij.ImageJ
+         name: ImageJ

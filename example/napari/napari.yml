@@ -1,0 +1,18 @@
+---
+output: 
+    dockerFile: Docker.napari
+run:
+    commands:
+       - "mkdir -p /usr/local/renci/bin"
+    scripts:
+       - python.sh
+       - napari.sh
+
+shortcuts:
+    - napari:
+         icon: /usr/local/renci/napari/napari/resources/logo.png
+         exec: napari
+         name: Napari Image Viewer
+
+    - napari2:
+         exec: napari
