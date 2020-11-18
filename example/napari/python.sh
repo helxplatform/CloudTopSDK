@@ -15,4 +15,5 @@ set -x \
    && make install \
    && python3 --version \
    && apt install -y python3-pip \
+   && pip3 install --upgrade pip setuptools wheel \
    && pip3 --version
