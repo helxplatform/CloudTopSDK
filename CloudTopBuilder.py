@@ -68,7 +68,7 @@ def main():
 
    # this optional second argument specified the label for the cloutop image to use as the 
    # base image.  The default is develop-latest, which will often be what you want. See 
-   # https://hub.docker.com/repository/docker/heliumdatastage/cloudtop/tags for other choices
+   # https://hub.docker.com/repository/docker/helxplatform/cloudtop/tags for other choices
    if (len(sys.argv) == 2):
       tag = "develop-latest"
    else:   
