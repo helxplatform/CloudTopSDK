@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=Gnu Octave
+StartupNotify=true
+Exec=octave
+Icon=/usr/share/octave/4.0.3/imagelib/octave-sombrero.png
+Terminal=false
+Type=Application
