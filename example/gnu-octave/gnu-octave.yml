@@ -20,5 +20,5 @@ run:
 shortcuts:
     - gnu-octave:
          icon: /usr/share/octave/4.0.3/imagelib/octave-sombrero.png
-         exec: octave
+         exec: xfce4-terminal -x octave
          name: Gnu Octave
