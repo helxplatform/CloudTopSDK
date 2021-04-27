@@ -1,4 +1,5 @@
 #! /bin/bash
 ### Add Napari
 set -x \
-   && pip3 install napari[pyqt5]
+   && /opt/miniconda3/bin/conda install -y -c conda-forge napari \
+   && chmod -R 777 /opt/miniconda3
