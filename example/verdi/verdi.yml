@@ -1,0 +1,13 @@
+---
+output: 
+    dockerFile: Docker.verdi
+run:
+    commands:
+       - "mkdir -p /usr/local/renci/bin"
+    scripts:
+       - verdi.sh
+
+shortcuts:
+    - verdi:
+         exec: /usr/local/renci/bin/VERDI_2.1/verdi.sh
+         name: Verdi
