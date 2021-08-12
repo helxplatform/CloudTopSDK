@@ -6,7 +6,7 @@ output:
     dockerFile: Docker.kstars
 
 ##########################################################################
-# Here is the run block.  
+# This is the run block
 ##########################################################################
 run:
     commands:
@@ -15,10 +15,10 @@ run:
        - kstars.sh
 
 ##########################################################################
-# desktop under the icon will "napari2".
+# Desktop shortcut and icon
 ##########################################################################
 shortcuts:
     - kstars:
-#        icon: /usr/share/octave/4.0.3/imagelib/octave-sombrero.png
-         exec: kstars
-         name: kstars
+        icon: /usr/share/icons/hicolor/128x128/apps/kstars.png
+        exec: kstars
+        name: kstars
