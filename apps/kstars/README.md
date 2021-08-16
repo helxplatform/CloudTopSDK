@@ -8,6 +8,11 @@ Specify `latest` to refer to the helxplatform/cloudtop:latest image tag.
 ../../CloudTopBuilder.py kstars.yml latest
 ```
 
+Specify no second arg to get the default `develop-latest` image.
+```
+../../CloudTopBuilder.py kstars.yml
+```
+
 ## Build the docker image
 ```
 docker build -f Docker.kstars -t kstarstest .
