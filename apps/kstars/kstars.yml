@@ -2,7 +2,7 @@
 ##########################################################################
 # Specify the output docker build file to create
 ##########################################################################
-output: 
+output:
     dockerFile: Docker.kstars
 
 ##########################################################################
@@ -10,9 +10,10 @@ output:
 ##########################################################################
 run:
     commands:
-           - "mkdir -p /usr/local/renci/data"
+        - "mkdir -p /usr/local/renci/data"
     scripts:
-       - kstars.sh
+        - debian-buster-upgrade.sh
+        - kstars.sh
 
 ##########################################################################
 # Desktop shortcut and icon

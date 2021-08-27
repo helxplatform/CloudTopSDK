@@ -15,7 +15,11 @@ Specify no second arg to get the default `develop-latest` image.
 
 ## Build the docker image
 ```
-docker build -f Docker.kstars -t kstarstest .
+# development
+docker build -f Docker.kstars -t wtstephens/kstarstest .
+
+# production
+docker build -f Docker.kstars -t helxplatform/cloudtop-kstars:develop-latest .
 ```
 
 ## Run the image locally
@@ -23,5 +27,5 @@ docker build -f Docker.kstars -t kstarstest .
 Browse to localhost:8080 to interact with the image (essentially HTTP <--> VNC).
 
 ```
-docker run -p 8080:8080 -e USER_NAME=myusername -e VNC_PW=mypassword kstarstest:latest
+docker run -p 8080:8080 -e USER_NAME=myusername -e VNC_PW=mypassword wtstephens/kstarstest:latest
 ```

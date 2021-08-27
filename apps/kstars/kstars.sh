@@ -1,10 +1,5 @@
 #! /bin/bash
 
-### buster upgrade (i.e. debian 10)
-echo "deb http://deb.debian.org/debian buster main contrib" > /etc/apt/sources.list \
-   && apt-get update -qq \
-   && apt-get full-upgrade -qqy
-
 ### DS9
 set -x \
   && apt-get install -y saods9
@@ -17,4 +12,7 @@ set -x \
 
 ### KStars
 set -x && \
- sudo apt-get install -y kstars-data kstars
+ sudo apt-get install -y qt5-default qt5ct libqt5core5a kstars-data kstars
+
+set -x && \
+  sudo strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
