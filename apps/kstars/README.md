@@ -16,10 +16,11 @@ Specify no second arg to get the default `develop-latest` image.
 ## Build the docker image
 ```
 # development
-docker build -f Docker.kstars -t wtstephens/kstarstest .
+docker build -f Docker.kstars -t wtstephens/cloudtop-kstars:0.1.2-dev .
 
 # production
 docker build -f Docker.kstars -t helxplatform/cloudtop-kstars:develop-latest .
+docker build -f Docker.kstars -t helxplatform/cloudtop-kstars:0.1.1 .
 ```
 
 ## Run the image locally
