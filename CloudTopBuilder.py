@@ -60,7 +60,7 @@ def main():
 
    global DESKTOP_FILE, DESKTOP_INIT_FILE_HEADER, DESKTOP_INIT_FILE_STANZA, CLOUDTOP_HEADER_LINE, CLOUDTOP_ENTRYPOINT_LINE
    if len(sys.argv) < 2:
-      print ("usage: dockerBuilder.py yamlFile [CloudTop-tag]")
+      print ("usage: dockerBuilder.py yamlFile [CloudTop-tag | user/repo:tag]")
       return
 
    thisExecutable = sys.argv[0]
@@ -92,13 +92,27 @@ def main():
    outFile = open(outputFileName, "w")
    run = parsedYaml["run"]
    commands = run["commands"]
+   files = parsedYaml["files"]
    scripts = run["scripts"]
    shortcuts = parsedYaml["shortcuts"]
 
    # Insert the correct GENERATOR name and TIME and Add the header line
-   CLOUDTOP_HEADER_LINE = CLOUDTOP_HEADER_LINE.replace("GENERATOR", thisExecutable).replace("TIME", now).replace("CLOUDTOP_VERSION", tag)
+   if ("/" in tag) and (":" in tag):
+      CLOUDTOP_HEADER_LINE = CLOUDTOP_HEADER_LINE.replace("GENERATOR", thisExecutable).replace("TIME", now).replace("helxplatform/cloudtop:CLOUDTOP_VERSION", tag)
+   else:
+      CLOUDTOP_HEADER_LINE = CLOUDTOP_HEADER_LINE.replace("GENERATOR", thisExecutable).replace("TIME", now).replace("CLOUDTOP_VERSION", tag)
    outFile.write(CLOUDTOP_HEADER_LINE)
    outFile.write("\n")
+
+   # loop through the files, and prepend a COPY command for each
+   for i in range(len(files)):
+      thisFile = files[i]
+      for key in thisFile:
+         attrs = thisFile[key]
+         sourceFile = attrs["source"]
+         destFile = attrs["dest"]
+         outFile.write(f"COPY {sourceFile} {destFile}\n")
+      outFile.write("\n")
 
    # loop through the commands.For each one prepend the RUN command and output to the file
    # execute it,
