@@ -1,0 +1,33 @@
+---
+##########################################################################
+# Specify the output docker build file to create
+##########################################################################
+output: 
+    dockerFile: Docker.image-analyses
+
+##########################################################################
+# Here is the run block.  The command directive creates a 
+# directory in the output image. The two scripts are copied
+# into the output image, then they are made executable and 
+# executed.  The first script installs some needed system libraries
+# and python 3, while the second script does the actual napari install
+##########################################################################
+run:
+    commands:
+       - "mkdir -p /usr/local/renci/bin"
+    scripts:
+       - python.sh
+       - napari.sh
+       - imagej.sh
+
+shortcuts:
+    - napari:
+         icon: /opt/miniconda3/lib/python3.8/site-packages/napari/resources/logo.png
+         exec: /opt/miniconda3/bin/napari
+         name: Napari Image Viewer
+
+    - imagej:
+         icon: /usr/local/renci/bin/ImageJ/images/icon.png
+         exec: /usr/bin/java -Xmx512m -cp /usr/local/renci/bin/ImageJ/ij.jar ij.ImageJ
+         name: ImageJ
+
