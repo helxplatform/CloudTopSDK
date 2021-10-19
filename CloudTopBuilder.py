@@ -92,7 +92,12 @@ def main():
    outFile = open(outputFileName, "w")
    run = parsedYaml["run"]
    commands = run["commands"]
-   files = parsedYaml["files"]
+   if "files" in parsedYaml.keys():
+       files = parsedYaml["files"]
+   else:
+       files = ""
+   print ("len files" + str(len(files)))
+       
    scripts = run["scripts"]
    shortcuts = parsedYaml["shortcuts"]
 
