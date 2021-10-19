@@ -12,7 +12,7 @@ set -x \
 
 ### KStars
 set -x && \
- sudo apt-get install -y qt5-default qt5ct libqt5core5a kstars-data kstars
+  sudo apt-get install -y kstars-data kstars
 
 set -x && \
   sudo strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
