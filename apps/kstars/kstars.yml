@@ -6,13 +6,20 @@ output:
     dockerFile: Docker.kstars
 
 ##########################################################################
+# This is the files block
+##########################################################################
+files:
+    - file1:
+        source: ./saoimage-ds9-icon.png
+        dest: /usr/share/icons/hicolor/128x128/apps/saoimage-ds9-icon.png
+
+##########################################################################
 # This is the run block
 ##########################################################################
 run:
     commands:
         - "mkdir -p /usr/local/renci/data"
     scripts:
-        - debian-buster-upgrade.sh
         - kstars.sh
 
 ##########################################################################
@@ -25,5 +32,5 @@ shortcuts:
         name: kstars
     - ds9:
         icon: /usr/share/icons/hicolor/128x128/apps/saoimage-ds9-icon.png
-        exec: ds9 -rgb -green /headless/tycho_1630-2260eV.fits -blue /headless/tycho_4100-6100eV.fits -red /headless/tycho_950-1260eV.fits
+        exec: ds9 -rgb -red /headless/tycho_950-1260eV.fits -green /headless/tycho_1630-2260eV.fits -blue /headless/tycho_4100-6100eV.fits
         name: ds9
