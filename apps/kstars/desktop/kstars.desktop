@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=kstars
+StartupNotify=true
+Exec=kstars
+Icon=/usr/share/icons/hicolor/128x128/apps/kstars.png
+Terminal=false
+Type=Application

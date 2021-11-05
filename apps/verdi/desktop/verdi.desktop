@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=Verdi
+StartupNotify=true
+Exec=/usr/local/renci/bin/VERDI_2.1/verdi.sh
+Icon=applications-other
+Terminal=false
+Type=Application

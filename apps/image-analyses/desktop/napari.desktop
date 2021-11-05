@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=Napari Image Viewer
+StartupNotify=true
+Exec=/opt/miniconda3/bin/napari
+Icon=/opt/miniconda3/lib/python3.8/site-packages/napari/resources/logo.png
+Terminal=false
+Type=Application

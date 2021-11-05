@@ -1,0 +1,8 @@
+[Desktop Entry]
+Version=1.0
+Name=ds9
+StartupNotify=true
+Exec=ds9 -rgb -red /headless/tycho_950-1260eV.fits -green /headless/tycho_1630-2260eV.fits -blue /headless/tycho_4100-6100eV.fits
+Icon=/usr/share/icons/hicolor/128x128/apps/saoimage-ds9-icon.png
+Terminal=false
+Type=Application
