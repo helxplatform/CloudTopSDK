@@ -31,7 +31,7 @@ pipeline {
             steps {
                 container('agent-docker') {
                     sh '''
-                    echo build
+                    ./CloudTopBuilder.py apps/napari/napari.yml helxplatform/cloudtop-napari:$BRANCH_NAME
                     '''
                 }
             }
