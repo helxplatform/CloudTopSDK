@@ -33,6 +33,7 @@ pipeline {
                     sh '''
                     echo build
                     ./CloudTopBuilder.py apps/napari/napari.yml helxplatform/cloudtop-napari:$BRANCH_NAME
+                    docker build -t helxplatform/cloudtop-napari:$BRANCH_NAME -f Docker.napari .
                     '''
                 }
             }
