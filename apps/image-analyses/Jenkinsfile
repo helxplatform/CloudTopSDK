@@ -1,0 +1,67 @@
+pipeline {
+    agent {
+        kubernetes {
+            cloud 'kubernetes'
+            yaml '''
+              apiVersion: v1
+              kind: Pod
+              spec:
+                containers:
+                - name: agent-docker
+                  image: wateim/jenkins-agent:latest
+                  command: 
+                  - cat
+                  tty: true
+                  volumeMounts:
+                    - name: dockersock
+                      mountPath: "/var/run/docker.sock"
+                volumes:
+                - name: dockersock
+                  hostPath:
+                    path: /var/run/docker.sock 
+            '''
+        }
+    }
+    stages {
+        stage('Build') {
+            environment {
+                DOCKERHUB_CREDS = credentials("${env.REGISTRY_CREDS_ID_STR}")
+                DOCKER_REGISTRY = "${env.DOCKER_REGISTRY}"
+            }
+            steps {
+                container('agent-docker') {
+                    sh '''
+                    echo build
+                    cd apps/image-analyses
+                    ../../CloudTopBuilder.py image-analyses.yml helxplatform/cloudtop:$BRANCH_NAME
+                    docker build -t helxplatform/cloudtop-image-analyses:$BRANCH_NAME -f Docker.image-analyses .
+                    '''
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                container('agent-docker') {
+                    sh '''
+                    echo test
+                    '''
+                }
+            }
+        }
+        stage('Publish') {
+            environment {
+                DOCKERHUB_CREDS = credentials("${env.REGISTRY_CREDS_ID_STR}")
+                DOCKER_REGISTRY = "${env.DOCKER_REGISTRY}"
+            }
+            steps {
+                container('agent-docker') {
+                    sh '''
+                    echo publish
+                    echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin $DOCKER_REGISTRY
+                    docker push helxplatform/cloudtop-image-analyses:$BRANCH_NAME
+                    '''
+                }
+            }
+        }
+    }
+}
