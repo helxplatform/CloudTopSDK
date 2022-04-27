@@ -32,7 +32,8 @@ pipeline {
                 container('agent-docker') {
                     sh '''
                     echo build
-                    ./CloudTopBuilder.py apps/napari/napari.yml helxplatform/cloudtop:$BRANCH_NAME
+                    cd apps/napari
+                    ../../CloudTopBuilder.py apps/napari/napari.yml helxplatform/cloudtop:$BRANCH_NAME
                     docker build -t helxplatform/cloudtop-napari:$BRANCH_NAME -f Docker.napari .
                     '''
                 }
