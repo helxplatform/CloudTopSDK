@@ -63,6 +63,9 @@ def main():
       print ("usage: dockerBuilder.py yamlFile [CloudTop-tag | user/repo:tag]")
       return
 
+   print(sys.argv[0])
+   print(sys.argv[1])
+
    thisExecutable = sys.argv[0]
    yamlFile = sys.argv[1]
 
@@ -82,6 +85,7 @@ def main():
 
    # Open the input
    inFile = open(yamlFile)
+   print(inFile)
 
    # Read the yaml file and grab the scripts and shortcuts
    parsedYaml = yaml.load(inFile, Loader=yaml.FullLoader)
@@ -91,15 +95,20 @@ def main():
 
    outFile = open(outputFileName, "w")
    run = parsedYaml["run"]
+   if "envs" in parsedYaml.keys():
+      envs = parsedYaml["envs"]
+
    commands = run["commands"]
    if "files" in parsedYaml.keys():
        files = parsedYaml["files"]
    else:
        files = ""
-   print ("len files" + str(len(files)))
        
    scripts = run["scripts"]
-   shortcuts = parsedYaml["shortcuts"]
+   if "shortcuts" in parsedYaml.keys():
+      shortcuts = parsedYaml["shortcuts"]
+   else:
+      shortcuts = ""
 
    # Insert the correct GENERATOR name and TIME and Add the header line
    if ("/" in tag) and (":" in tag):
@@ -126,6 +135,11 @@ def main():
       outFile.write("RUN " + thisCommand)      
       outFile.write("\n")
 
+   for i in range(len(envs)):
+      env = envs[i]
+      outFile.write("ENV " + env)
+      outFile.write("\n")
+
    # loop through the scripts.For each one COPY it into the docker image, chmod +x and
    # execute it,
    for i in range(len(scripts)):
@@ -148,37 +162,45 @@ def main():
    if len(shortcuts) > 0:
       # create the init file
       initFile= open(outputDir + "/" + DESKTOP_INIT_FILE_NAME, "w")
+      print(f"init file: {initFile}")
       
       # add the required header
       initFile.write(DESKTOP_INIT_FILE_HEADER.replace("GENERATOR", thisExecutable).replace("TIME", now))
       
    for i in range(len(shortcuts)):
       thisShortcut = shortcuts[i]
+      print(f"thisShortcut: {thisShortcut}")
       for key in thisShortcut:
          attrs = thisShortcut[key]
+         print(f"attrs: {attrs}")
 
          # get the required exec key
          exec = attrs["exec"]
+         print(f"exec: {exec}")
 
          # BY default the name is the same as the exec
          name = exec
 
          if 'icon' in attrs:
             icon = attrs["icon"]
+            print(f"icon: {icon}")
          else:
             icon = defaultIcon
 
          if 'name' in attrs:
             name = attrs["name"]
+            print(f"name: {name}")
          
          # Create the desktopfile name
-         desktopFileName = key + ".desktop"   
+         desktopFileName = key + ".desktop"
+         print(f"create desktop file name: {desktopFileName}")   
 
          # Create the local name for desktopfile name
          generateDesktopFileName = outputDir + "/" + key + ".desktop"   
-            
+         print(f"generate desktop file name: {generateDesktopFileName}")   
          # opem the desktopfile    
          desktopFile= open(generateDesktopFileName, "w")
+         print(f"open desktop file: {desktopFile}")
 
          # If the desktop file isn't executable, the launcher gives a warning.  No one wants that :)
          os.chmod(generateDesktopFileName, 0o775)
@@ -187,9 +209,10 @@ def main():
          # now added the needed stanza to the init file
          initFile.write(DESKTOP_INIT_FILE_STANZA.replace("DESKTOP_FILE", desktopFileName))
          initFile.write("\n")
-
-      
-   initFile.close()
+   try:
+      initFile.close()
+   except Exception as e:
+      pass
 
    # Now we need to copy the desktop files and the container init files to the proper location
    outFile.write("COPY " + outputDir + "/*.desktop /headless/Desktop/")
