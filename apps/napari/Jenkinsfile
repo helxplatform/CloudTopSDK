@@ -72,7 +72,7 @@ pipeline {
         container(name: 'kaniko', shell: '/busybox/sh') {
           sh '''
           echo build
-          cd apps/anpari
+          cd apps/napari
           ../../CloudTopBuilder.py napari.yml helxplatform/cloudtop:$BRANCH_NAME
           /kaniko/executor --dockerfile Docker.napari --context . --verbosity debug --destination helxplatform/cloudtop-napari:$BRANCH_NAME
           '''
