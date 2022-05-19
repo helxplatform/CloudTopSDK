@@ -95,8 +95,11 @@ def main():
 
    outFile = open(outputFileName, "w")
    run = parsedYaml["run"]
+
    if "envs" in parsedYaml.keys():
       envs = parsedYaml["envs"]
+   else:
+      envs = ""
 
    commands = run["commands"]
    if "files" in parsedYaml.keys():
@@ -162,45 +165,36 @@ def main():
    if len(shortcuts) > 0:
       # create the init file
       initFile= open(outputDir + "/" + DESKTOP_INIT_FILE_NAME, "w")
-      print(f"init file: {initFile}")
       
       # add the required header
       initFile.write(DESKTOP_INIT_FILE_HEADER.replace("GENERATOR", thisExecutable).replace("TIME", now))
       
    for i in range(len(shortcuts)):
       thisShortcut = shortcuts[i]
-      print(f"thisShortcut: {thisShortcut}")
       for key in thisShortcut:
          attrs = thisShortcut[key]
-         print(f"attrs: {attrs}")
 
          # get the required exec key
          exec = attrs["exec"]
-         print(f"exec: {exec}")
 
          # BY default the name is the same as the exec
          name = exec
 
          if 'icon' in attrs:
             icon = attrs["icon"]
-            print(f"icon: {icon}")
          else:
             icon = defaultIcon
 
          if 'name' in attrs:
             name = attrs["name"]
-            print(f"name: {name}")
          
          # Create the desktopfile name
          desktopFileName = key + ".desktop"
-         print(f"create desktop file name: {desktopFileName}")   
 
          # Create the local name for desktopfile name
          generateDesktopFileName = outputDir + "/" + key + ".desktop"   
-         print(f"generate desktop file name: {generateDesktopFileName}")   
          # opem the desktopfile    
          desktopFile= open(generateDesktopFileName, "w")
-         print(f"open desktop file: {desktopFile}")
 
          # If the desktop file isn't executable, the launcher gives a warning.  No one wants that :)
          os.chmod(generateDesktopFileName, 0o775)
