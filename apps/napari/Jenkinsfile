@@ -33,6 +33,15 @@ pipeline {
               mountPath: /kaniko/.docker
             - name: workspace
               mountPath: /home/jenkins/agent
+          - name: tools
+            command:
+            - /bin/cat
+            image: wateim/jenkins-tools:latest
+            imagePullPolicy: Always
+            tty: true
+            volumeMounts:
+            - name: workspace
+              mountPath: /home/jenkins/agent
           initContainers:
           - name: init
             image: busybox:1.28
@@ -69,11 +78,16 @@ pipeline {
         DOCKER_REGISTRY = "${env.DOCKER_REGISTRY}"
       }
       steps {
+        container(name: 'tools', shell: '/bin/sh') {
+          sh '''
+          echo tools
+          cd apps/napari
+          python ../../CloudTopBuilder.py napari.yml helxplatform/cloudtop:$BRANCH_NAME
+          '''
+        }
         container(name: 'kaniko', shell: '/busybox/sh') {
           sh '''
           echo build
-          cd apps/napari
-          ../../CloudTopBuilder.py napari.yml helxplatform/cloudtop:$BRANCH_NAME
           /kaniko/executor --dockerfile Docker.napari --context . --verbosity debug --destination helxplatform/cloudtop-napari:$BRANCH_NAME
           '''
         }
