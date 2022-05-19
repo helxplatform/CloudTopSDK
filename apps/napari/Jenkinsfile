@@ -88,6 +88,7 @@ pipeline {
         container(name: 'kaniko', shell: '/busybox/sh') {
           sh '''
           echo build
+          cd apps/napari
           /kaniko/executor --dockerfile Docker.napari --context . --verbosity debug --destination helxplatform/cloudtop-napari:$BRANCH_NAME
           '''
         }
