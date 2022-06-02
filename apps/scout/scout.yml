@@ -29,6 +29,6 @@ envs:
     - PATH /opt/conda/bin:$PATH
 
 shortcuts:
-    - napari:
+    - scout:
          exec: scout
          name: SCOUT
