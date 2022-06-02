@@ -63,9 +63,6 @@ def main():
       print ("usage: dockerBuilder.py yamlFile [CloudTop-tag | user/repo:tag]")
       return
 
-   print(sys.argv[0])
-   print(sys.argv[1])
-
    thisExecutable = sys.argv[0]
    yamlFile = sys.argv[1]
 
@@ -85,7 +82,6 @@ def main():
 
    # Open the input
    inFile = open(yamlFile)
-   print(inFile)
 
    # Read the yaml file and grab the scripts and shortcuts
    parsedYaml = yaml.load(inFile, Loader=yaml.FullLoader)
