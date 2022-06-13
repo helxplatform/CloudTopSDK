@@ -97,7 +97,7 @@ pipeline {
           echo "Build stage"
           echo "Tools step"
           cd $APP_DIR
-          python ../../CloudTopBuilder.py imagej.yml helxplatform/cloudtop:$BRANCH_NAME
+          python ../../CloudTopBuilder.py napari.yml helxplatform/cloudtop:$BRANCH_NAME
           '''
         }
         container(name: 'kaniko', shell: '/busybox/sh') {
