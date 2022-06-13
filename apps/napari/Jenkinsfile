@@ -42,6 +42,13 @@ pipeline {
             volumeMounts:
             - name: workspace
               mountPath: /home/jenkins/agent
+          - name: crane
+            workingDir: /tmp/jenkins
+            image: gcr.io/go-containerregistry/crane:debug
+            imagePullPolicy: Always
+            command:
+            - /busybox/cat
+            tty: true
           initContainers:
           - name: init
             image: busybox:1.28
@@ -70,26 +77,72 @@ pipeline {
       '''
     }
   }
+  environment {
+    PATH = "/busybox:/kaniko:/ko-app/:$PATH"
+    DOCKERHUB_CREDS = credentials("${env.REGISTRY_CREDS_ID_STR}")
+    REGISTRY = "${env.DOCKER_REGISTRY}"
+    REG_OWNER="helxplatform"
+    REG_APP="cloudtop-napari"
+    COMMIT_HASH="${sh(script:"git rev-parse --short HEAD", returnStdout: true).trim()}"
+    IMAGE_NAME="${REG_OWNER}/${REG_APP}"
+    TAG1="$BRANCH_NAME"
+    TAG2="$COMMIT_HASH"
+    APP_DIR="apps/napari"
+  }
   stages {
-    stage('Build-Push') {
-      environment {
-        PATH = "/busybox:/kaniko:$PATH"
-        DOCKERHUB_CREDS = credentials("${env.REGISTRY_CREDS_ID_STR}")
-        DOCKER_REGISTRY = "${env.DOCKER_REGISTRY}"
-      }
+  stages {
+    stage('Build') {
       steps {
         container(name: 'tools', shell: '/bin/sh') {
           sh '''
-          echo tools
-          cd apps/napari
-          python ../../CloudTopBuilder.py napari.yml helxplatform/cloudtop:$BRANCH_NAME
+          echo "Build stage"
+          echo "Tools step"
+          cd $APP_DIR
+          python ../../CloudTopBuilder.py imagej.yml helxplatform/cloudtop:$BRANCH_NAME
           '''
         }
         container(name: 'kaniko', shell: '/busybox/sh') {
           sh '''
-          echo build
-          cd apps/napari
-          /kaniko/executor --dockerfile Docker.napari --context . --verbosity debug --destination helxplatform/cloudtop-napari:$BRANCH_NAME
+          echo "Build step"
+          cd $APP_DIR
+          /kaniko/executor --dockerfile Docker.napari \
+                           --context . \
+                           --verbosity debug \
+                           --no-push \
+                           --destination $IMAGE_NAME:$TAG1 \
+                           --destination $IMAGE_NAME:$TAG2 \
+                           --tarPath image.tar
+          '''
+        }
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: "$APP_DIR/image.tar", onlyIfSuccessful: true
+        }
+      }
+    }
+    stage('Test') {
+      steps {
+          sh '''
+          echo "Stage test"
+          '''
+      }
+    }
+    stage('Publish') {
+      steps {
+        container(name: 'crane', shell: '/busybox/sh') {
+          sh '''
+          echo "Publish stage"
+          echo "$DOCKERHUB_CREDS_PSW" | crane auth login -u $DOCKERHUB_CREDS_USR --password-stdin $REGISTRY
+          crane push $APP_DIR/image.tar $IMAGE_NAME:$TAG1
+          crane push $APP_DIR/image.tar $IMAGE_NAME:$TAG2
+          '''
+        }
+      }
+      post {
+        cleanup {
+          sh '''
+          echo "Remove archived artifacts."
           '''
         }
       }
