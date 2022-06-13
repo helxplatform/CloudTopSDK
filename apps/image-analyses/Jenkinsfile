@@ -118,30 +118,30 @@ pipeline {
           archiveArtifacts artifacts: 'image.tar', onlyIfSuccessful: true
         }
       }
-      stage('Test') {
-        steps {
+    }
+    stage('Test') {
+      steps {
           sh '''
           echo "Stage test"
           '''
+      }
+    }
+    stage('Publish') {
+      steps {
+        container(name: 'crane', shell: '/busybox/sh') {
+          sh '''
+          echo "Publish stage"
+          echo "$DOCKERHUB_CREDS_PSW" | crane auth login -u $DOCKERHUB_CREDS_USR --password-stdin $REGISTRY
+          crane push image.tar $IMAGE_NAME:$TAG1
+          crane push image.tar $IMAGE_NAME:$TAG2
+          '''
         }
       }
-      stage('Publish') {
-        steps {
-          container(name: 'crane', shell: '/busybox/sh') {
-            sh '''
-            echo "Publish stage"
-            echo "$DOCKERHUB_CREDS_PSW" | crane auth login -u $DOCKERHUB_CREDS_USR --password-stdin $REGISTRY
-            crane push image.tar $IMAGE_NAME:$TAG1
-            crane push image.tar $IMAGE_NAME:$TAG2
-            '''
-          }
-        }
-        post {
-          cleanup {
-            sh '''
-            echo "Remove archived artifacts."
-            '''
-          }
+      post {
+        cleanup {
+          sh '''
+          echo "Remove archived artifacts."
+          '''
         }
       }
     }
