@@ -104,7 +104,7 @@ pipeline {
           sh '''
           echo "Build step"
           cd $APP_DIR
-          /kaniko/executor --dockerfile Docker.image-analyses \
+          /kaniko/executor --dockerfile Docker.imagej \
                            --context . \
                            --verbosity debug \
                            --no-push \
