@@ -96,7 +96,7 @@ pipeline {
           sh '''
           echo "Build stage"
           echo "Tools step"
-          cd $APPS_DIR
+          cd $APP_DIR
           python ../../CloudTopBuilder.py imagej.yml helxplatform/cloudtop:$BRANCH_NAME
           '''
         }
