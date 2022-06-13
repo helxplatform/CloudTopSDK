@@ -90,7 +90,6 @@ pipeline {
     APP_DIR="apps/napari"
   }
   stages {
-  stages {
     stage('Build') {
       steps {
         container(name: 'tools', shell: '/bin/sh') {
@@ -149,6 +148,7 @@ pipeline {
     }
   }
 }
+
 //  stages {
 //      stage('Build') {
 //          environment {
