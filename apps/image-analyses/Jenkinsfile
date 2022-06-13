@@ -106,16 +106,9 @@ pipeline {
           /kaniko/executor --dockerfile Docker.image-analyses \
                            --context . \
                            --verbosity debug \
-                           --no-push \
                            --destination $IMAGE_NAME:$TAG1 \
-                           --destination $IMAGE_NAME:$TAG2 \
-                           --tarPath image.tar
+                           --destination $IMAGE_NAME:$TAG2
           '''
-        }
-      }
-      post {
-        always {
-          archiveArtifacts artifacts: 'apps/image-analyses/image.tar', onlyIfSuccessful: true
         }
       }
     }
@@ -124,25 +117,6 @@ pipeline {
           sh '''
           echo "Stage test"
           '''
-      }
-    }
-    stage('Publish') {
-      steps {
-        container(name: 'crane', shell: '/busybox/sh') {
-          sh '''
-          echo "Publish stage"
-          echo "$DOCKERHUB_CREDS_PSW" | crane auth login -u $DOCKERHUB_CREDS_USR --password-stdin $REGISTRY
-          crane push image.tar $IMAGE_NAME:$TAG1
-          crane push image.tar $IMAGE_NAME:$TAG2
-          '''
-        }
-      }
-      post {
-        cleanup {
-          sh '''
-          echo "Remove archived artifacts."
-          '''
-        }
       }
     }
   }
