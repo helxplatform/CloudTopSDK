@@ -115,7 +115,7 @@ pipeline {
       }
       post {
         always {
-          archiveArtifacts artifacts: 'image.tar', onlyIfSuccessful: true
+          archiveArtifacts artifacts: 'apps/image-analyses/image.tar', onlyIfSuccessful: true
         }
       }
     }
