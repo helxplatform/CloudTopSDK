@@ -31,14 +31,12 @@ pipeline {
         }
         stage('Publish') {
             steps {
-                container('agent-docker') {
-                    sh '''
-                    echo "Publish Stage"
-                    echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin $DOCKER_REGISTRY
-                    docker push $IMAGE_NAME$TAG1
-                    docker push $IMAGE_NAME$TAG2
-                    '''
-                }
+                sh '''
+                echo "Publish Stage"
+                echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin $DOCKER_REGISTRY
+                docker push $IMAGE_NAME$TAG1
+                docker push $IMAGE_NAME$TAG2
+                '''
             }
         }
     }
