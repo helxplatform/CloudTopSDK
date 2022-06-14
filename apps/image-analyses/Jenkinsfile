@@ -18,7 +18,7 @@ pipeline {
                 echo "Build Stage"
                 cd $APP_DIR
                 ../../CloudTopBuilder.py image-analyses.yml helxplatform/cloudtop:$BRANCH_NAME
-                docker build -t $IMAGE_NAME:$TAG1 -t $IMAGE_NAME:$TAG2 -f Docker.napari .
+                docker build -t $IMAGE_NAME:$TAG1 -t $IMAGE_NAME:$TAG2 -f Docker.image-analyses .
                 '''
             }
         }
