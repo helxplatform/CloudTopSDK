@@ -9,7 +9,7 @@ pipeline {
         IMAGE_NAME="${DOCKER_REGISTRY}/${REG_OWNER}/${REG_APP}"
         TAG1="$BRANCH_NAME"
         TAG2="$COMMIT_HASH"
-        APP_DIR="appsimage-analyses"
+        APP_DIR="apps/image-analyses"
     }
     stages {
         stage('Build') {
