@@ -91,15 +91,23 @@ def main():
 
    outFile = open(outputFileName, "w")
    run = parsedYaml["run"]
+
+   if "envs" in parsedYaml.keys():
+      envs = parsedYaml["envs"]
+   else:
+      envs = ""
+
    commands = run["commands"]
    if "files" in parsedYaml.keys():
        files = parsedYaml["files"]
    else:
        files = ""
-   print ("len files" + str(len(files)))
        
    scripts = run["scripts"]
-   shortcuts = parsedYaml["shortcuts"]
+   if "shortcuts" in parsedYaml.keys():
+      shortcuts = parsedYaml["shortcuts"]
+   else:
+      shortcuts = ""
 
    # Insert the correct GENERATOR name and TIME and Add the header line
    if ("/" in tag) and (":" in tag):
@@ -124,6 +132,11 @@ def main():
    for i in range(len(commands)):
       thisCommand = commands[i]
       outFile.write("RUN " + thisCommand)      
+      outFile.write("\n")
+
+   for i in range(len(envs)):
+      env = envs[i]
+      outFile.write("ENV " + env)
       outFile.write("\n")
 
    # loop through the scripts.For each one COPY it into the docker image, chmod +x and
@@ -172,11 +185,10 @@ def main():
             name = attrs["name"]
          
          # Create the desktopfile name
-         desktopFileName = key + ".desktop"   
+         desktopFileName = key + ".desktop"
 
          # Create the local name for desktopfile name
          generateDesktopFileName = outputDir + "/" + key + ".desktop"   
-            
          # opem the desktopfile    
          desktopFile= open(generateDesktopFileName, "w")
 
@@ -187,9 +199,10 @@ def main():
          # now added the needed stanza to the init file
          initFile.write(DESKTOP_INIT_FILE_STANZA.replace("DESKTOP_FILE", desktopFileName))
          initFile.write("\n")
-
-      
-   initFile.close()
+   try:
+      initFile.close()
+   except Exception as e:
+      pass
 
    # Now we need to copy the desktop files and the container init files to the proper location
    outFile.write("COPY " + outputDir + "/*.desktop /headless/Desktop/")

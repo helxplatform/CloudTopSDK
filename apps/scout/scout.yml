@@ -1,0 +1,34 @@
+---
+##########################################################################
+# Specify the output docker build file to create
+##########################################################################
+output:
+    dockerFile: Docker.scout
+
+##########################################################################
+# This is the files block
+##########################################################################
+#files:
+#    - file1:
+#        source: ./saoimage-ds9-icon.png
+#        dest: /usr/share/icons/hicolor/128x128/apps/saoimage-ds9-icon.png
+
+##########################################################################
+# This is the run block
+##########################################################################
+run:
+    commands:
+        - "mkdir -p /usr/local/renci/data"
+    scripts:
+        - conda.sh
+        - scout.sh
+
+envs:
+    - LANG C.UTF-8
+    - LC_ALL C.UTF-8
+    - PATH /opt/conda/bin:$PATH
+
+shortcuts:
+    - scout:
+         exec: scout
+         name: SCOUT
