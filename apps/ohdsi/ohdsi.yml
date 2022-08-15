@@ -1,0 +1,33 @@
+---
+##########################################################################
+# Specify the output docker build file to create
+##########################################################################
+output: 
+    dockerFile: Docker.ohdsi
+
+##########################################################################
+# Here is the run block.  The command directive creates a 
+# directory in the output image. The two scripts are copied
+# into the output image, then they are made executable and 
+# executed.  The first script installs some needed system libraries
+# and python 3, while the second script does the actual napari install
+##########################################################################
+run:
+    commands:
+       - "mkdir -p /usr/local/renci/bin"
+    scripts:
+       - ohdsi.sh
+
+##########################################################################
+# This shortcuts block installs 2 different shortcuts for the napari 
+# executable. This is only for documentation purposes.  Both shortuts
+# execute napari, but the first uses a specified logo and display text,
+# while the second uses the default logo.  The text displayed on the 
+# desktop under the icon will "napari2".
+##########################################################################
+shortcuts:
+    - ohdsi:
+         icon: /opt/miniconda3/lib/python3.8/site-packages/napari/resources/logo.png
+         exec: /opt/miniconda3/bin/napari
+         name: Napari Image Viewer
+
