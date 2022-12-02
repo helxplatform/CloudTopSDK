@@ -1,0 +1,45 @@
+---
+##########################################################################
+# Specify the output docker build file to create
+##########################################################################
+output:
+    dockerFile: Docker.pgadmin-cloudtop
+
+
+##########################################################################
+# This is the files block
+##########################################################################
+files:
+    - file1:
+        source: ./pgadmin4.png
+        dest: /usr/share/icons/hicolor/128x128/apps/pgadmin4.png
+
+
+##########################################################################
+# Here is the run block.  The command directive creates a
+# directory in the output image. The two scripts are copied
+# into the output image, then they are made executable and
+# executed.  The first script installs some needed system libraries
+# and python 3, while the second script does the actual napari install
+##########################################################################
+run:
+    commands:
+       - "mkdir -p /usr/local/renci/bin"
+    scripts:
+       - pgadmin-cloudtop.sh
+
+##########################################################################
+# This shortcuts block installs 2 different shortcuts for the pgadmin
+# executable. This is only for documentation purposes.  Both shortuts
+# execute pgadmin, but the first uses a specified logo and display text,
+# while the second uses the default logo.  The text displayed on the
+# desktop under the icon will "pgadmin-2".
+##########################################################################
+shortcuts:
+    - pgadmin:
+         icon: /usr/share/icons/hicolor/128x128/apps/pgadmin4.png
+         exec: /usr/pgadmin4/bin/pgadmin4
+         name: pgadmin
+
+#   - pgadmin-2:
+#        exec: pgadmin
