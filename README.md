@@ -1,3 +1,5 @@
+![maintenance-status](https://img.shields.io/badge/maintenance-deprecated-red.svg)
+
 # CloudTopSDK
 Code to automatically generate docker files
 
